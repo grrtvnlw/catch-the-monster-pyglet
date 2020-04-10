@@ -1,5 +1,5 @@
 import pyglet
-from game import player, monster, resources
+from game import player, monster, goblin, resources
 from random import randint
 
 from config import WIDTH, HEIGHT
@@ -22,15 +22,22 @@ victory_song = pyglet.media.load('./resources/win.wav')
 victory_music = pyglet.media.Player()
 victory_music.queue(victory_song)
 
-# Set up the two top labels
+# Set the music for when player loses
+losing_song = pyglet.media.load('./resources/lose.wav')
+losing_music = pyglet.media.Player()
+losing_music.queue(losing_song)
+
+# Set up the two top labels, score label and lives label
 score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
+lives_label = pyglet.text.Label(text="Lives 3", font_name="Garamond", font_size=26, x=400, y=455, batch=main_batch)
 
 # Initialize the player sprite
 hero = player.Player(x=400, y=300, batch=main_batch)
-goblin = monster.Monster(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
+monster_inst = monster.Monster(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
+goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
 
 # Store all objects that update each frame in a list
-game_objects = [hero, goblin]
+game_objects = [hero, monster_inst, goblin_inst]
 
 # Tell the main window that the player object responds to events
 game_window.push_handlers(hero.key_handler)
@@ -46,7 +53,7 @@ score = 0
 is_drawing = True  # Controls whether to show movement
 
 
-def game_over():
+def game_won():
     global is_drawing
 
     is_drawing = False
@@ -55,6 +62,17 @@ def game_over():
     victory_music.play()
     # Set up victory label
     victory_label = pyglet.text.Label(text="YOU WON!!!", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+
+def game_lost():
+    global is_drawing
+
+    is_drawing = False
+    music.pause()
+    # Play losing music!
+    losing_music.play()
+    # Set up losing label
+    losing_label = pyglet.text.Label(text="YOU Lost :(", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+
 
 
 def update(dt):
@@ -90,15 +108,21 @@ def update(dt):
 
             score += 10
             score_label.text = f"Caught {score}"
+            # _label.text = f"Lives {lives}"
 
             gotcha_sound_effect = pyglet.media.load('./resources/bullet.wav', streaming=False)
             gotcha_sound_effect.play()
 
             if score == 100:
-                game_over()
+                game_won()
+
+            # if lives == 0:
+            #     game_lost()
 
             # Add a new monster
-            new_goblin = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+            new_monster = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+            new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+            game_objects.append(new_monster)
             game_objects.append(new_goblin)
 
 
