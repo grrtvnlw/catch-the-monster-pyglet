@@ -4,6 +4,8 @@ from random import randint
 
 from config import WIDTH, HEIGHT
 
+pyglet.font.load("Garamond")
+
 # Set up a window
 game_window = pyglet.window.Window(WIDTH, HEIGHT)
 
@@ -15,8 +17,13 @@ theme_song = pyglet.media.load('./resources/music.wav')
 music = pyglet.media.Player()
 music.queue(theme_song)
 
+# Set the music for when player wins
+victory_song = pyglet.media.load('./resources/win.wav')
+victory_music = pyglet.media.Player()
+victory_music.queue(victory_song)
+
 # Set up the two top labels
-score_label = pyglet.text.Label(text="Caught 0", x=15, y=465, batch=main_batch)
+score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
 
 # Initialize the player sprite
 hero = player.Player(x=400, y=300, batch=main_batch)
@@ -44,6 +51,10 @@ def game_over():
 
     is_drawing = False
     music.pause()
+    # Play victory music!
+    victory_music.play()
+    # Set up victory label
+    victory_label = pyglet.text.Label(text="YOU WON!!!", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
 
 
 def update(dt):
@@ -80,8 +91,11 @@ def update(dt):
             score += 10
             score_label.text = f"Caught {score}"
 
-            gotcha_sound_effect = pyglet.media.load('./resources/win.wav', streaming=False)
+            gotcha_sound_effect = pyglet.media.load('./resources/bullet.wav', streaming=False)
             gotcha_sound_effect.play()
+
+            if score == 100:
+                game_over()
 
             # Add a new monster
             new_goblin = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
