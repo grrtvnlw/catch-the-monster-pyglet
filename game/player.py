@@ -10,7 +10,7 @@ class Player(physicalobject.PhysicalObject):
         super().__init__(img=resources.player_image, *args, **kwargs)
 
         # How fast can the player move?
-        self.speed = 300
+        self.speed = 600
 
         # Let pyglet handle keyboard events for us
         self.key_handler = key.KeyStateHandler()
