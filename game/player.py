@@ -15,6 +15,12 @@ class Player(physicalobject.PhysicalObject):
         # Let pyglet handle keyboard events for us
         self.key_handler = key.KeyStateHandler()
 
+        self.name = "Joe"
+
+        self.lives = 3
+
+        self.score = 0
+
     def update(self, dt):
         # Do all the normal physics stuff
         super().update(dt)
@@ -36,9 +42,15 @@ class Player(physicalobject.PhysicalObject):
             self.velocity_y = -self.speed
 
     def delete(self):
-        # We have to implement this, but we do not want
-        # to delete the player when they catch the monster
-        pass
+       # We have a child sprite which must be deleted when this object
+        # is deleted from batches, etc.
+        super().delete()
 
     def handle_collision_with(self, other_object):
-        self.dead = False
+        if other_object.name == "Goblin":
+            self.dead = True
+            # self.lives -= 1
+        elif other_object.name == "Monster":
+            self.dead = False
+            # self.score += 5
+        

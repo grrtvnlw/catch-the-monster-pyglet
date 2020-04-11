@@ -13,6 +13,7 @@ class Monster(physicalobject.PhysicalObject):
         self.counter = 0
         self.change_at = randint(50,100)
         self.randomize()
+        self.name = "Monster"
 
     def update(self, dt):
         # Do all the normal physics stuff
@@ -33,12 +34,12 @@ class Monster(physicalobject.PhysicalObject):
         
         # This expression means: there is a 50%
         # chance we will change our horizontal direction.
-        if randint(0, 100) > 20:
+        if randint(0, 100) > 50:
             self.velocity_x *= -1
             
         # This expression means: there is a 50%
         # chance we will change our vertical direction.
-        if randint(0, 100) > 20:
+        if randint(0, 100) > 50:
             self.velocity_y *= -1        
 
     def delete(self):
@@ -47,4 +48,8 @@ class Monster(physicalobject.PhysicalObject):
         super().delete()
 
     def handle_collision_with(self, other_object):
-        self.dead = True
+        if other_object.name == "Joe":
+            self.dead = True
+            # other_object.score += 5
+        else:
+            self.dead = False

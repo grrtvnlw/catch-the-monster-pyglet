@@ -50,8 +50,8 @@ def on_draw():
 
 is_drawing = True  # Controls whether to show movement
 
-score = 0
-lives = 3
+# score = 0
+# lives = 3
 
 def game_won():
     global is_drawing
@@ -74,11 +74,10 @@ def game_lost():
     losing_label = pyglet.text.Label(text="YOU Lost :(", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
 
 
-
 def update(dt):
 
-    global score
-    global lives
+    # global score
+    # global lives
 
     if is_drawing:
 
@@ -119,32 +118,32 @@ def update(dt):
             game_objects.remove(to_remove)
 
             # Set score and lives variables
-            score += 10
-
-            score_label.text = f"Caught {score}"
-            lives_label.text = f"Lives {lives}"
-
-            gotcha_sound_effect = pyglet.media.load('./resources/bullet.wav', streaming=False)
-            gotcha_sound_effect.play()
-
-            if score == 100:
-                game_won()
-
-            if lives <= 0:
-                game_lost()
-
+            # score += 10
 
             if to_remove.name == "Joe":
                 new_player = player.Player(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 game_objects.insert(1, new_player)
                 game_window.push_handlers(new_player.key_handler)
-                lives -= 1
-            else:
+                hero.lives -= 1
+            elif to_remove.name == "Monster":
                 # Add a new monster
                 new_monster = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 game_objects.insert(2, new_monster)
+                hero.score += 10
                 #game_objects.append(new_goblin)
+
+            score_label.text = f"Caught {hero.score}"
+            lives_label.text = f"Lives {hero.lives}"
+
+            gotcha_sound_effect = pyglet.media.load('./resources/bullet.wav', streaming=False)
+            gotcha_sound_effect.play()
+
+            if hero.score == 100:
+                game_won()
+
+            if hero.lives <= 0:
+                game_lost()
             
 
 
