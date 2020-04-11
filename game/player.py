@@ -17,7 +17,7 @@ class Player(physicalobject.PhysicalObject):
 
         self.name = "Joe"
 
-        self.lives = 3
+        self.lives = 5
 
         self.score = 0
 
@@ -49,8 +49,6 @@ class Player(physicalobject.PhysicalObject):
     def handle_collision_with(self, other_object):
         if other_object.name == "Goblin":
             self.dead = True
-            # self.lives -= 1
         elif other_object.name == "Monster":
             self.dead = False
-            # self.score += 5
-        
+    

@@ -27,14 +27,14 @@ losing_song = pyglet.media.load('./resources/lose.wav')
 losing_music = pyglet.media.Player()
 losing_music.queue(losing_song)
 
-# Set up the two top labels, score label and lives label
-score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
-lives_label = pyglet.text.Label(text="Lives 3", font_name="Garamond", font_size=26, x=400, y=455, batch=main_batch)
-
 # Initialize the player sprite
 hero = player.Player(x=400, y=300, batch=main_batch)
 monster_inst = monster.Monster(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
+
+# Set up the two top labels, score label and lives label
+score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
+lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=400, y=455, batch=main_batch)
 
 # Store all objects that update each frame in a list
 game_objects = [goblin_inst, hero, monster_inst]
@@ -112,7 +112,7 @@ def update(dt):
 
             if to_remove.name == "Joe":
                 new_player = player.Player(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                game_objects.insert(1, new_player)
+                game_objects.append(new_player) #insert(1, new_player)
                 game_window.push_handlers(new_player.key_handler)
                 # Update lives
                 hero.lives -= 1
@@ -122,7 +122,7 @@ def update(dt):
                 # Add a new monster
                 new_monster = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                game_objects.insert(2, new_monster)
+                game_objects.append(new_monster)#insert(2, new_monster)
                 # Update score
                 hero.score += 10
                 #game_objects.append(new_goblin)

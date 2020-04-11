@@ -27,14 +27,14 @@ losing_song = pyglet.media.load('./resources/lose.wav')
 losing_music = pyglet.media.Player()
 losing_music.queue(losing_song)
 
-# Set up the two top labels, score label and lives label
-score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
-lives_label = pyglet.text.Label(text="Lives 3", font_name="Garamond", font_size=26, x=400, y=455, batch=main_batch)
-
 # Initialize the player sprite
 hero = player.Player(x=400, y=300, batch=main_batch)
 monster_inst = monster.Monster(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
+
+# Set up the two top labels, score label and lives label
+score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
+lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=400, y=455, batch=main_batch)
 
 # Store all objects that update each frame in a list
 game_objects = [goblin_inst, hero, monster_inst]
@@ -68,7 +68,7 @@ def game_lost():
     # Play losing music!
     losing_music.play()
     # Set up losing label
-    losing_label = pyglet.text.Label(text="YOU Lost :(", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+    losing_label = pyglet.text.Label(text="YOU LOST :(", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
 
 def update(dt):
 
@@ -79,13 +79,16 @@ def update(dt):
 
         # To avoid handling collisions twice, we employ nested loops of ranges.
         # This method also avoids the problem of colliding an object with itself.
-        for i in range(len(game_objects) - 1):
-            for j in range(i + 1, len(game_objects) - 1):
+        for i in range(len(game_objects)):
+            for j in range(i + 1, len(game_objects)):
 
                 obj_1 = game_objects[0]
                 obj_2 = game_objects[1]
                 # add a 3rd object
                 obj_3 = game_objects[2]
+                # add a 4th object
+                if len(game_objects) == 4:
+                    obj_4 = game_objects[3]                      
 
                 # Make sure the objects haven't already been killed
                 if not obj_2.dead and not obj_3.dead:
@@ -101,6 +104,21 @@ def update(dt):
                         print(f"{obj_1.name} collides with {obj_3.name}")
                         obj_1.handle_collision_with(obj_3)
                         obj_3.handle_collision_with(obj_1)
+                    try:
+                        if obj_1.collides_with(obj_4):
+                            print(f"{obj_1.name} collides with {obj_4.name}")
+                            obj_1.handle_collision_with(obj_4)
+                            obj_4.handle_collision_with(obj_1)
+                        if obj_2.collides_with(obj_4):
+                            print(f"{obj_2.name} collides with {obj_4.name}")
+                            obj_2.handle_collision_with(obj_4)
+                            obj_4.handle_collision_with(obj_2)
+                        if obj_3.collides_with(obj_4):
+                            print(f"{obj_3.name} collides with {obj_4.name}")
+                            obj_3.handle_collision_with(obj_4)
+                            obj_4.handle_collision_with(obj_3)
+                    except UnboundLocalError:
+                        pass
 
         # Get rid of dead objects
         for to_remove in [obj for obj in game_objects if obj.dead]:
@@ -112,32 +130,32 @@ def update(dt):
 
             if to_remove.name == "Joe":
                 new_player = player.Player(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                game_objects.insert(1, new_player)
+                game_objects.insert(1, new_player) #insert(1, new_player)
                 game_window.push_handlers(new_player.key_handler)
                 # Update lives
                 hero.lives -= 1
+                life_sound_effect = pyglet.media.load('./resources/loselife.wav', streaming=False)
+                life_sound_effect.play()
             elif to_remove.name == "Monster":
                 # Add a new monster
                 new_monster = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                game_objects.insert(2, new_monster)
+                game_objects.insert(2, new_monster) #insert(2, new_monster)
                 # Update score
                 hero.score += 10
                 #game_objects.append(new_goblin)
+                gotcha_sound_effect = pyglet.media.load('./resources/points.wav', streaming=False)
+                gotcha_sound_effect.play()
 
             score_label.text = f"Caught {hero.score}"
             lives_label.text = f"Lives {hero.lives}"
 
-            gotcha_sound_effect = pyglet.media.load('./resources/bullet.wav', streaming=False)
-            gotcha_sound_effect.play()
+            if hero.score == 50 and len(game_objects) == 3:
+                goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+                #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+                game_objects.insert(3, goblin_inst)
 
-            # if hero.score == 50:
-            #     if len(game_objects) <= 4:
-            #         new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-            #         #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-            #         game_objects.insert(0, new_goblin)
-
-            if hero.score == 100:
+            if hero.score == 200:
                 game_won()
 
             if hero.lives <= 0:

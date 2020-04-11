@@ -30,17 +30,17 @@ class Goblin(physicalobject.PhysicalObject):
             self.randomize()
 
     def randomize(self):
-        self.velocity_x = randint(300, 500)
-        self.velocity_y = randint(300, 500)
+        self.velocity_x = randint(250, 450)
+        self.velocity_y = randint(250, 450)
         
         # This expression means: there is a 50%
         # chance we will change our horizontal direction.
-        if randint(0, 100) > 30:
+        if randint(0, 100) > 60:
             self.velocity_x *= -1
             
         # This expression means: there is a 50%
         # chance we will change our vertical direction.
-        if randint(0, 100) > 30:
+        if randint(0, 100) > 60:
             self.velocity_y *= -1        
 
     def delete(self):
