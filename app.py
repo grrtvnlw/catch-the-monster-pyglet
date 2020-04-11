@@ -116,6 +116,8 @@ def update(dt):
                 game_window.push_handlers(new_player.key_handler)
                 # Update lives
                 hero.lives -= 1
+                life_sound_effect = pyglet.media.load('./resources/loselife.wav', streaming=False)
+                life_sound_effect.play()
             elif to_remove.name == "Monster":
                 # Add a new monster
                 new_monster = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
@@ -124,14 +126,13 @@ def update(dt):
                 # Update score
                 hero.score += 10
                 #game_objects.append(new_goblin)
+                gotcha_sound_effect = pyglet.media.load('./resources/points.wav', streaming=False)
+                gotcha_sound_effect.play()
 
             score_label.text = f"Caught {hero.score}"
             lives_label.text = f"Lives {hero.lives}"
 
-            gotcha_sound_effect = pyglet.media.load('./resources/bullet.wav', streaming=False)
-            gotcha_sound_effect.play()
-
-            
+            ##
 
             # if hero.score == 50:
             #     if len(game_objects) <= 4:
