@@ -23,8 +23,8 @@ center_image(goblin_image)
 
 background = pyglet.resource.image('background.png')
 
-# bullet_image = pyglet.resource.image("bullet.png")
-# center_image(bullet_image)
+life_image = pyglet.resource.image("fishy.png")
+center_image(life_image)
 
 # asteroid_image = pyglet.resource.image("asteroid.png")
 # center_image(asteroid_image)

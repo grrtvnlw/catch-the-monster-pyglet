@@ -14,6 +14,7 @@ class PhysicalObject(pyglet.sprite.Sprite):
 
         # And a flag to remove this object from the game_object list
         self.dead = False
+        self.new_objects = [] 
 
     def update(self, dt):
         """This method should be called every frame."""
@@ -45,7 +46,7 @@ class PhysicalObject(pyglet.sprite.Sprite):
 
         # Calculate distance between object centers that would be a collision,
         # assuming square resources
-        collision_distance = self.image.width / 1.75 + other_object.image.width / 1.75
+        collision_distance = self.image.width / 1.5 + other_object.image.width / 1.5
 
         # Get distance using position tuples
         actual_distance = util.distance(self.position, other_object.position)

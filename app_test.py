@@ -1,5 +1,5 @@
 import pyglet
-from game import player, monster, goblin, resources
+from game import player, monster, goblin, resources, life
 from random import randint
 
 from config import WIDTH, HEIGHT
@@ -72,6 +72,8 @@ def game_lost():
 
 def update(dt):
 
+    rand_num = randint(0, 2)
+
     if is_drawing:
 
         for obj in game_objects:
@@ -91,7 +93,14 @@ def update(dt):
                     obj_4 = game_objects[3] 
                 if len(game_objects) == 5:
                     obj_4 = game_objects[3] 
-                    obj_5 = game_objects[4]                     
+                    obj_5 = game_objects[4] 
+                # if len(game_objects) < 5:
+                if len(game_objects) == 6:
+                    obj_4 = game_objects[3] 
+                    obj_5 = game_objects[4] 
+                    obj_6 = game_objects[5]
+                elif obj.name == "life" in game_objects:
+                    obj_6 = obj.name == "life"             
 
                 # Make sure the objects haven't already been killed
                 if not obj_2.dead and not obj_3.dead:
@@ -141,6 +150,30 @@ def update(dt):
                             obj_5.handle_collision_with(obj_4)
                     except UnboundLocalError:
                         pass
+                    try:
+                        if obj_6 in game_objects:
+                            if obj_1.collides_with(obj_6):
+                                print(f"{obj_1.name} collides with {obj_6.name}")
+                                obj_1.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_1)
+                            if obj_2.collides_with(obj_6):
+                                print(f"{obj_2.name} collides with {obj_6.name}")
+                                obj_2.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_2)
+                            if obj_3.collides_with(obj_6):
+                                print(f"{obj_3.name} collides with {obj_6.name}")
+                                obj_3.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_3)
+                            if obj_4.collides_with(obj_6):
+                                print(f"{obj_4.name} collides with {obj_6.name}")
+                                obj_4.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_4)
+                            if obj_5.collides_with(obj_6):
+                                print(f"{obj_5.name} collides with {obj_6.name}")
+                                obj_5.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_5)
+                    except UnboundLocalError:
+                        pass
 
         # Get rid of dead objects
         for to_remove in [obj for obj in game_objects if obj.dead]:
@@ -167,19 +200,39 @@ def update(dt):
                 hero.score += 10
                 gotcha_sound_effect = pyglet.media.load('./resources/points.wav', streaming=False)
                 gotcha_sound_effect.play()
+            elif to_remove.name == "life":
+                # Update score
+                hero.lives += 1
+                print("Life")
+                life_sound_effect = pyglet.media.load('./resources/life.wav', streaming=False)
+                life_sound_effect.play()
 
             score_label.text = f"Caught {hero.score}"
             lives_label.text = f"Lives {hero.lives}"
 
             if hero.score == 50 and len(game_objects) == 3:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                # goblin_inst.name = "Goblin1"
+                goblin_inst.name = "Goblin1"
                 game_objects.insert(3, goblin_inst)
-#
+
             if hero.score == 100 and len(game_objects) == 4:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                # goblin_inst.name = "Goblin2"
+                goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
+
+            
+            if rand_num == 1:
+                life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+                life_list = []
+                if len(game_objects) < 6:
+                    for obj in game_objects:
+                        if obj.name == "life":
+                            pass
+                    else:
+                        life_list.append(life_inst)
+                        game_objects.extend(life_list) 
+                elif len(game_objects) == 6:
+                    game_objects.insert(5, life_inst)
 
             if hero.score == 150:
                 game_won()

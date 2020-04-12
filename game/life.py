@@ -1,20 +1,19 @@
 import pyglet
 from pyglet.window import key
 from . import physicalobject, resources
-from . import util
 
 from random import randint
 
-class Goblin(physicalobject.PhysicalObject):
-    """Physical object that responds to user input"""
+class Life(physicalobject.PhysicalObject):
+    """Bullets fired by the player"""
 
     def __init__(self, *args, **kwargs):
-        super().__init__(img=resources.goblin_image, *args, **kwargs)
+        super().__init__(img=resources.life_image, *args, **kwargs)
 
         self.counter = 0
         self.change_at = randint(50,100)
         self.randomize()
-        self.name = "Goblin"
+        self.name = "life"
 
     def update(self, dt):
         # Do all the normal physics stuff
@@ -30,17 +29,17 @@ class Goblin(physicalobject.PhysicalObject):
             self.randomize()
 
     def randomize(self):
-        self.velocity_x = randint(200, 300)
-        self.velocity_y = randint(200, 300)
+        self.velocity_x = randint(50, 100)
+        self.velocity_y = randint(50, 100)
         
         # This expression means: there is a 50%
         # chance we will change our horizontal direction.
-        if randint(0, 100) > 40:
+        if randint(0, 100) > 60:
             self.velocity_x *= -1
             
         # This expression means: there is a 50%
         # chance we will change our vertical direction.
-        if randint(0, 100) > 40:
+        if randint(0, 100) > 60:
             self.velocity_y *= -1        
 
     def delete(self):
@@ -49,4 +48,7 @@ class Goblin(physicalobject.PhysicalObject):
         super().delete()
 
     def handle_collision_with(self, other_object):
-        self.dead = False
+        if other_object.name == "Joe":
+            self.dead = True
+        else:
+            self.dead = False
