@@ -162,11 +162,9 @@ def update(dt):
             elif to_remove.name == "Monster":
                 # Add a new monster
                 new_monster = monster.Monster(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 game_objects.insert(2, new_monster) #insert(2, new_monster)
                 # Update score
                 hero.score += 10
-                #game_objects.append(new_goblin)
                 gotcha_sound_effect = pyglet.media.load('./resources/points.wav', streaming=False)
                 gotcha_sound_effect.play()
 
@@ -175,15 +173,15 @@ def update(dt):
 
             if hero.score == 50 and len(game_objects) == 3:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                goblin_inst.name = "Goblin1"
+                # goblin_inst.name = "Goblin1"
                 game_objects.insert(3, goblin_inst)
 #
             if hero.score == 100 and len(game_objects) == 4:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                goblin_inst.name = "Goblin2"
+                # goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
 
-            if hero.score == 200:
+            if hero.score == 150:
                 game_won()
 
             if hero.lives <= 0:
