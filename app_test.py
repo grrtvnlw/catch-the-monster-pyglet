@@ -34,7 +34,7 @@ goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main
 
 # Set up the two top labels, score label and lives label
 score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
-lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=400, y=455, batch=main_batch)
+lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=390, y=455, batch=main_batch)
 
 # Store all objects that update each frame in a list
 game_objects = [goblin_inst, hero, monster_inst]
@@ -88,7 +88,10 @@ def update(dt):
                 obj_3 = game_objects[2]
                 # add a 4th object
                 if len(game_objects) == 4:
-                    obj_4 = game_objects[3]                      
+                    obj_4 = game_objects[3] 
+                if len(game_objects) == 5:
+                    obj_4 = game_objects[3] 
+                    obj_5 = game_objects[4]                     
 
                 # Make sure the objects haven't already been killed
                 if not obj_2.dead and not obj_3.dead:
@@ -119,6 +122,25 @@ def update(dt):
                             obj_4.handle_collision_with(obj_3)
                     except UnboundLocalError:
                         pass
+                    try:
+                        if obj_1.collides_with(obj_5):
+                            print(f"{obj_1.name} collides with {obj_5.name}")
+                            obj_1.handle_collision_with(obj_5)
+                            obj_5.handle_collision_with(obj_1)
+                        if obj_2.collides_with(obj_5):
+                            print(f"{obj_2.name} collides with {obj_5.name}")
+                            obj_2.handle_collision_with(obj_5)
+                            obj_5.handle_collision_with(obj_2)
+                        if obj_3.collides_with(obj_5):
+                            print(f"{obj_3.name} collides with {obj_5.name}")
+                            obj_3.handle_collision_with(obj_5)
+                            obj_5.handle_collision_with(obj_3)
+                        if obj_4.collides_with(obj_5):
+                            print(f"{obj_4.name} collides with {obj_5.name}")
+                            obj_4.handle_collision_with(obj_5)
+                            obj_5.handle_collision_with(obj_4)
+                    except UnboundLocalError:
+                        pass
 
         # Get rid of dead objects
         for to_remove in [obj for obj in game_objects if obj.dead]:
@@ -134,6 +156,7 @@ def update(dt):
                 game_window.push_handlers(new_player.key_handler)
                 # Update lives
                 hero.lives -= 1
+                print("Dead")
                 life_sound_effect = pyglet.media.load('./resources/loselife.wav', streaming=False)
                 life_sound_effect.play()
             elif to_remove.name == "Monster":
@@ -152,8 +175,13 @@ def update(dt):
 
             if hero.score == 50 and len(game_objects) == 3:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                #new_goblin = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+                goblin_inst.name = "Goblin1"
                 game_objects.insert(3, goblin_inst)
+#
+            if hero.score == 100 and len(game_objects) == 4:
+                goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+                goblin_inst.name = "Goblin2"
+                game_objects.insert(4, goblin_inst)
 
             if hero.score == 200:
                 game_won()
