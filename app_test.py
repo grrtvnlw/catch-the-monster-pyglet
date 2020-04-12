@@ -72,8 +72,6 @@ def game_lost():
 
 def update(dt):
 
-    rand_num = randint(0, 2)
-
     if is_drawing:
 
         for obj in game_objects:
@@ -220,19 +218,20 @@ def update(dt):
                 goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
 
-            
-            if rand_num == 1:
+            rand_num = randint(0, 6)
+            if rand_num == 3:
                 life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 life_list = []
-                if len(game_objects) < 6:
-                    for obj in game_objects:
-                        if obj.name == "life":
-                            pass
-                    else:
-                        life_list.append(life_inst)
+                if len(game_objects) == 6:
+                    if obj_6 not in game_objects:
+                        game_objects.insert(5, life_inst)
+                else: #len(game_objects) < 6:
+                    # for obj in game_objects:
+                    #     if obj.name == "life":
+                    life_list.append(life_inst)
+                    if len(life_list) <= 1:
                         game_objects.extend(life_list) 
-                elif len(game_objects) == 6:
-                    game_objects.insert(5, life_inst)
+                
 
             if hero.score == 150:
                 game_won()
