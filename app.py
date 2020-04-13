@@ -236,14 +236,14 @@ def update(dt):
             if rand_num:
                 life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 life_list = []
+                life_list.append(life_inst)
                 if len(game_objects) == 6:
                     if obj_6 not in game_objects:
                         game_objects.insert(5, life_inst)
                 else:
                     if life_inst in game_objects:
-                        pass
+                        life_list = []
                     else:
-                        life_list.append(life_inst)
                         game_objects.extend(life_list) 
                          
             if hero.score == 500:
