@@ -49,10 +49,6 @@ class Player(physicalobject.PhysicalObject):
     def handle_collision_with(self, other_object):
         if other_object.name == "Goblin":
             self.dead = True
-        elif other_object.name == "Goblin1":
-            self.dead = True
-        elif other_object.name == "Goblin2":
-            self.dead = True
         elif other_object.name == "Monster":
             self.dead = False
         elif other_object.name == "life":

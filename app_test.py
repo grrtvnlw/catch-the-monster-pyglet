@@ -231,20 +231,20 @@ def update(dt):
                 goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
 
-            rand_num = randint(0, 8)
-            if rand_num == 4:
+            rand_num = randint(0, 9)
+            if rand_num == 5:
                 life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 life_list = []
                 if len(game_objects) == 6:
                     if obj_6 not in game_objects:
                         game_objects.insert(5, life_inst)
                 else:
-                    # for obj in game_objects:
-                    #     if obj.name == "life":
-                    life_list.append(life_inst)
-                    if len(life_list) <= 1:
+                    if life_inst in game_objects:
+                        pass
+                    else:
+                        life_list.append(life_inst)
                         game_objects.extend(life_list) 
-                
+                         
             if hero.score == 500:
                 if hero.score > score:
                     score = hero.score
