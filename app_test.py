@@ -1,6 +1,6 @@
 import pyglet
 from game import player, monster, goblin, resources, life
-from random import randint
+from random import randint, random
 
 from config import WIDTH, HEIGHT
 
@@ -223,16 +223,14 @@ def update(dt):
 
             if hero.score == 50 and len(game_objects) == 3:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                goblin_inst.name = "Goblin1"
                 game_objects.insert(3, goblin_inst)
 
             if hero.score == 100 and len(game_objects) == 4:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
 
-            rand_num = randint(0, 9)
-            if rand_num == 5:
+            rand_num = random() <= 0.1
+            if rand_num:
                 life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 life_list = []
                 if len(game_objects) == 6:
