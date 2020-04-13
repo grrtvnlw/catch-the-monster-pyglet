@@ -4,6 +4,15 @@ from random import randint
 
 from config import WIDTH, HEIGHT
 
+import pickle
+
+# load the previous score if it exists
+try:
+    with open('score.dat', 'rb') as file:
+        score = pickle.load(file)
+except:
+    score = 0
+
 pyglet.font.load("Garamond")
 
 # Set up a window
@@ -33,8 +42,8 @@ monster_inst = monster.Monster(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=m
 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
 
 # Set up the two top labels, score label and lives label
-score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
-lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=390, y=455, batch=main_batch)
+score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=30, y=455, batch=main_batch)
+lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=385, y=455, batch=main_batch)
 
 # Store all objects that update each frame in a list
 game_objects = [goblin_inst, hero, monster_inst]
@@ -59,6 +68,7 @@ def game_won():
     victory_music.play()
     # Set up victory label
     victory_label = pyglet.text.Label(text="YOU WON!!!", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+    hi_score_label = pyglet.text.Label(text=f"High Score {score}", font_name="Garamond", font_size=26, x=150, y=350, batch=main_batch)
 
 def game_lost():
     global is_drawing
@@ -69,8 +79,11 @@ def game_lost():
     losing_music.play()
     # Set up losing label
     losing_label = pyglet.text.Label(text="YOU LOST :(", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+    hi_score_label = pyglet.text.Label(text=f"High Score {score}", font_name="Garamond", font_size=26, x=150, y=350, batch=main_batch)
 
 def update(dt):
+
+    global score
 
     if is_drawing:
 
@@ -218,26 +231,35 @@ def update(dt):
                 goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
 
-            rand_num = randint(0, 6)
-            if rand_num == 3:
+            rand_num = randint(0, 8)
+            if rand_num == 4:
                 life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 life_list = []
                 if len(game_objects) == 6:
                     if obj_6 not in game_objects:
                         game_objects.insert(5, life_inst)
-                else: #len(game_objects) < 6:
+                else:
                     # for obj in game_objects:
                     #     if obj.name == "life":
                     life_list.append(life_inst)
                     if len(life_list) <= 1:
                         game_objects.extend(life_list) 
                 
-
-            if hero.score == 150:
+            if hero.score == 500:
+                if hero.score > score:
+                    score = hero.score
                 game_won()
+                # save the score
+                with open('score.dat', 'wb') as file:
+                    pickle.dump(score, file)
 
             if hero.lives <= 0:
-                game_lost()
+                if hero.score > score:
+                    score = hero.score
+                game_lost() 
+                # save the score
+                with open('score.dat', 'wb') as file:
+                    pickle.dump(score, file)
 
 if __name__ == "__main__":
     # Update the game 120 times per second

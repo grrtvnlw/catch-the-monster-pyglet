@@ -17,7 +17,7 @@ class Player(physicalobject.PhysicalObject):
 
         self.name = "Joe"
 
-        self.lives = 10
+        self.lives = 9
 
         self.score = 0
 
