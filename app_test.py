@@ -46,7 +46,10 @@ score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size
 lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=385, y=455, batch=main_batch)
 
 # Store all objects that update each frame in a list
-game_objects = [goblin_inst, hero, monster_inst]
+game_objects = []
+life_list = []
+player_list = [hero]
+enemies_list = [goblin_inst, monster_inst]
 
 # Tell the main window that the player object responds to events
 game_window.push_handlers(hero.key_handler)
@@ -83,10 +86,12 @@ def game_lost():
 
 def update(dt):
 
-    global score
+    global score, life_list
 
     if is_drawing:
 
+        game_objects = []
+        game_objects = player_list + enemies_list + life_list 
         for obj in game_objects:
             obj.update(dt)
 
@@ -95,8 +100,8 @@ def update(dt):
         for i in range(len(game_objects)):
             for j in range(i + 1, len(game_objects)):
 
-                obj_1 = game_objects[0]
-                obj_2 = game_objects[1]
+                obj_1 = game_objects[1]
+                obj_2 = game_objects[0]
                 # add a 3rd object
                 obj_3 = game_objects[2]
                 # add a 4th object
@@ -114,7 +119,7 @@ def update(dt):
                     obj_6 = obj.name == "life"             
 
                 # Make sure the objects haven't already been killed
-                if not obj_2.dead and not obj_3.dead:
+                if not player_list[0].dead and not obj_3.dead:
                     if obj_1.collides_with(obj_2):
                         print(f"{obj_1.name} collides with {obj_2.name}")
                         obj_1.handle_collision_with(obj_2)
@@ -229,7 +234,7 @@ def update(dt):
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 game_objects.insert(4, goblin_inst)
 
-            rand_num = random() <= 0.1
+            rand_num = random() <= 0.15
             if rand_num:
                 life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
                 life_list = []
@@ -238,7 +243,7 @@ def update(dt):
                         game_objects.insert(5, life_inst)
                 else:
                     if life_inst in game_objects:
-                        pass
+                        break
                     else:
                         life_list.append(life_inst)
                         game_objects.extend(life_list) 
