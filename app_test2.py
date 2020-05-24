@@ -1,8 +1,17 @@
 import pyglet
-from game import player, monster, goblin, resources
-from random import randint
+from game import player, monster, goblin, resources, life
+from random import random, randint
 
 from config import WIDTH, HEIGHT
+
+import pickle
+
+# load the previous score if it exists
+try:
+    with open('score.dat', 'rb') as file:
+        score = pickle.load(file)
+except:
+    score = 0
 
 pyglet.font.load("Garamond")
 
@@ -33,8 +42,8 @@ monster_inst = monster.Monster(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=m
 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0,HEIGHT), batch=main_batch)
 
 # Set up the two top labels, score label and lives label
-score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=15, y=455, batch=main_batch)
-lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=390, y=455, batch=main_batch)
+score_label = pyglet.text.Label(text="Caught 0", font_name="Garamond", font_size=26, x=30, y=455, batch=main_batch)
+lives_label = pyglet.text.Label(text=f"Lives {hero.lives}", font_name="Garamond", font_size=26, x=385, y=455, batch=main_batch)
 
 # Store all objects that update each frame in a list
 game_objects = [goblin_inst, hero, monster_inst]
@@ -59,6 +68,7 @@ def game_won():
     victory_music.play()
     # Set up victory label
     victory_label = pyglet.text.Label(text="YOU WON!!!", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+    hi_score_label = pyglet.text.Label(text=f"High Score {score}", font_name="Garamond", font_size=26, x=150, y=350, batch=main_batch)
 
 def game_lost():
     global is_drawing
@@ -69,8 +79,11 @@ def game_lost():
     losing_music.play()
     # Set up losing label
     losing_label = pyglet.text.Label(text="YOU LOST :(", font_name="Garamond", font_size=40, x=110, y=230, batch=main_batch)
+    hi_score_label = pyglet.text.Label(text=f"High Score {score}", font_name="Garamond", font_size=26, x=150, y=350, batch=main_batch)
 
 def update(dt):
+
+    global score
 
     if is_drawing:
 
@@ -91,7 +104,14 @@ def update(dt):
                     obj_4 = game_objects[3] 
                 if len(game_objects) == 5:
                     obj_4 = game_objects[3] 
-                    obj_5 = game_objects[4]                     
+                    obj_5 = game_objects[4] 
+                # if len(game_objects) < 5:
+                if len(game_objects) == 6:
+                    obj_4 = game_objects[3] 
+                    obj_5 = game_objects[4] 
+                    obj_6 = game_objects[5]
+                elif obj.name == "life" in game_objects:
+                    obj_6 = obj.name == "life"             
 
                 # Make sure the objects haven't already been killed
                 if not obj_2.dead and not obj_3.dead:
@@ -141,6 +161,30 @@ def update(dt):
                             obj_5.handle_collision_with(obj_4)
                     except UnboundLocalError:
                         pass
+                    try:
+                        if obj_6 in game_objects:
+                            if obj_1.collides_with(obj_6):
+                                print(f"{obj_1.name} collides with {obj_6.name}")
+                                obj_1.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_1)
+                            if obj_2.collides_with(obj_6):
+                                print(f"{obj_2.name} collides with {obj_6.name}")
+                                obj_2.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_2)
+                            if obj_3.collides_with(obj_6):
+                                print(f"{obj_3.name} collides with {obj_6.name}")
+                                obj_3.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_3)
+                            if obj_4.collides_with(obj_6):
+                                print(f"{obj_4.name} collides with {obj_6.name}")
+                                obj_4.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_4)
+                            if obj_5.collides_with(obj_6):
+                                print(f"{obj_5.name} collides with {obj_6.name}")
+                                obj_5.handle_collision_with(obj_6)
+                                obj_6.handle_collision_with(obj_5)
+                    except UnboundLocalError:
+                        pass
 
         # Get rid of dead objects
         for to_remove in [obj for obj in game_objects if obj.dead]:
@@ -167,25 +211,56 @@ def update(dt):
                 hero.score += 10
                 gotcha_sound_effect = pyglet.media.load('./resources/points.wav', streaming=False)
                 gotcha_sound_effect.play()
+            elif to_remove.name == "life":
+                # Update lives
+                hero.lives += 1
+                print("Life")
+                life_sound_effect = pyglet.media.load('./resources/life.wav', streaming=False)
+                life_sound_effect.play()
 
             score_label.text = f"Caught {hero.score}"
             lives_label.text = f"Lives {hero.lives}"
 
+            # generate second goblin
             if hero.score == 50 and len(game_objects) == 3:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                # goblin_inst.name = "Goblin1"
                 game_objects.insert(3, goblin_inst)
-#
+
+            # generate third goblin
             if hero.score == 100 and len(game_objects) == 4:
                 goblin_inst = goblin.Goblin(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
-                # goblin_inst.name = "Goblin2"
                 game_objects.insert(4, goblin_inst)
 
-            if hero.score == 150:
+            # randomly generate 1up
+            rand_num = random() <= 0.1
+            if rand_num:
+                life_inst = life.Life(x=randint(0, WIDTH), y=randint(0, HEIGHT), batch=main_batch)
+                life_list = []
+                life_list.append(life_inst)
+                if len(game_objects) == 6:
+                    if obj_6 not in game_objects:
+                        game_objects.insert(5, life_inst)
+                else:
+                    if life_inst in game_objects:
+                        life_list = []
+                    else:
+                        game_objects.extend(life_list) 
+                         
+            if hero.score == 500:
+                if hero.score > score:
+                    score = hero.score
                 game_won()
+                # save the score
+                with open('score.dat', 'wb') as file:
+                    pickle.dump(score, file)
 
             if hero.lives <= 0:
-                game_lost()
+                if hero.score > score:
+                    score = hero.score
+                game_lost() 
+                # save the score
+                with open('score.dat', 'wb') as file:
+                    pickle.dump(score, file)
 
 if __name__ == "__main__":
     # Update the game 120 times per second

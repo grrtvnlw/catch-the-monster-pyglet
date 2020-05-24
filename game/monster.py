@@ -29,8 +29,8 @@ class Monster(physicalobject.PhysicalObject):
             self.randomize()
 
     def randomize(self):
-        self.velocity_x = randint(100, 300)
-        self.velocity_y = randint(100, 300)
+        self.velocity_x = randint(100, 250)
+        self.velocity_y = randint(100, 250)
         
         # This expression means: there is a 50%
         # chance we will change our horizontal direction.
